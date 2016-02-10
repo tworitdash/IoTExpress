@@ -6,16 +6,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var hello = require('./routes/hello');
-
-
 var app = express();
 var io = require('socket.io')(http);
-
 var iot = require('./routes/iot')(io);
+var mongoose = require('mongoose');
+var connection = require('./routes/DbConnection.js')(mongoose);
+
+var routes = require('./routes/index');
+var users = require('./routes/users')(mongoose);
+var hello = require('./routes/hello');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,13 +22,13 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+//app.use('/', routes);  //default : public html
 app.use('/users', users);
 app.use('/hello', hello);
 
@@ -42,6 +41,7 @@ app.use(function(req, res, next) {
 
 // error handlers
 
+/*
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -63,7 +63,7 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
+*/
 
 http.listen(3001, function(){
   console.log("WebScoket Server is on :D")
