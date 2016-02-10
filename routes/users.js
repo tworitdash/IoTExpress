@@ -27,7 +27,7 @@ module.exports = function(mongoose) {
 
   router.get('/api/', userApi.find);
   router.get('/api/:id', userApi.findOne);
-  router.get('/api/insert/', userApi.insert);
+  router.all('/api/insert', userApi.insert);
   router.get('/api/destroy/:id', userApi.destroy);
   router.get('/api/update/:id', userApi.update);
   router.post('/test', function (req, res) {

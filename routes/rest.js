@@ -33,18 +33,23 @@ module.exports = function(Model){
       }
     });
   }
-
+  
   api.insert = function (req, res, next) {
-    console.log(req.query);
-    console.log("abra");
-    Model.insert(req.query).exec(function(e, response) {
+    //console.log(req.body);
+    //console.log("abra");
+   /* Model.insert(req.query).exec(function(e, response) {
       if(e) {
         res.send({Error : e});
         console.error(e);
       }else {
         res.send(response);
       }
-    });
+    });*/
+    var mdl = new Model(req.body || {foo: bar});
+    mdl.save(function(err){
+      if (err) res.send({err: err});
+      else res.send(mdl);
+    }); 
   }
 
   api.destroy = function (req, res, next) {
