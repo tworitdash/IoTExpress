@@ -35,9 +35,7 @@ module.exports = function(mongoose) {
   router.all('/api/logout/', auth.logout);
   router.all('/api/getuser/', auth.getSelfInformation)
 
-  router.get('/', policy.isLoggedin, function(req, res, next) {
-    res.render('user', {title: "welcome to temperature sensor data"});
-  });
+  
   
   return router;
 }
