@@ -64,9 +64,9 @@ module.exports = function(Model){
       if (err) {
         res.send({error:err});
       }else {
-        for (var prop in req.query) {
-          if (req.query.hasOwnProperty(prop)) {
-            doc[prop] = req.query[prop];
+        for (var prop in req.body) {
+          if (req.body.hasOwnProperty(prop)) {
+            doc[prop] = req.body[prop];
           }
         }
         doc.save(function(e) {

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+
 module.exports = function(mongoose) {
   var Schema = mongoose.Schema;
       var bcrypt   = require('bcryptjs');
@@ -16,22 +17,27 @@ module.exports = function(mongoose) {
       }
   });
 
-  router.get('/', function(req, res, next) {
-    res.render('user', {title: "welcome to temperature sensor data"});
-  });
+  
 
   // Create a user model with this scheme
 
   var User = mongoose.model('User', Account);
   var userApi = require('./rest.js')(User);
+  var auth = require('./auth.js')(User);
+  var policy = require('./policy.js');
 
   router.get('/api/', userApi.find);
   router.get('/api/:id', userApi.findOne);
   router.all('/api/insert', userApi.insert);
   router.get('/api/destroy/:id', userApi.destroy);
   router.get('/api/update/:id', userApi.update);
-  router.post('/test', function (req, res) {
-    res.send(req.body);
+  router.all('/api/login/', auth.login);
+  router.all('/api/logout/', auth.logout);
+  router.all('/api/getuser/', auth.getSelfInformation)
+
+  router.get('/', policy.isLoggedin, function(req, res, next) {
+    res.render('user', {title: "welcome to temperature sensor data"});
   });
+  
   return router;
 }

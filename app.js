@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var session = require('express-session');
 var app = express();
 var io = require('socket.io')(http);
 var iot = require('./routes/iot')(io);
@@ -27,6 +28,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({secret: 'key', resave: false, saveUninitialize: true, cookie: {secure: true}}));
 
 //app.use('/', routes);  //default : public html
 app.use('/users', users);
