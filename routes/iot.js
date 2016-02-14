@@ -1,19 +1,51 @@
+var Q = require('q');
+
 module.exports = function(io) {
-	var clients = [];
+	
+	var allowed_ids = require('./../data/credentials.js').valid_id ;
+	var authenticated_pool = [];
+
 	io.on('connection', function(socket){
 
-		clients.push(socket);
-
-		console.log('a user is connected');
-		socket.on('disconnect', function(){
-			console.log('user disconnected');
+		socket.on('auth', function(data){
+			console.log("Auth request recieved");
+			if (data.regId) {
+				if(allowed_ids.indexOf(data.regId)>=0){
+					socket.authId = data.regId;
+					authenticated_pool.push(socket);
+					socket.emit("auth",{result:"success"});
+					console.log("accepting id "+data.regId);
+				}else{
+					socket.emit("auth",{result:"failed"});
+					console.log("rejecting id "+data.regId);
+				}		
+			}		
 		});
-
-		socket.on('message', function(data){
-			console.log(data);
-			for(var i = 0; i < clients.length; i++){
-				clients[i].send(data);
+		
+		socket.on('disconnect', function(){
+			if (socket.authId) {
+				console.log('client '+socket.authId+' disconnected');
 			}
 		});
+
 	});
+
+	return {
+		BroadcastMessageToValidUser : function(channel, msg){
+			var deferred = Q.defer();
+			if (authenticated_pool.length) {
+				var uniqueIdsOnly = [];
+				authenticated_pool.forEach(function(ele, indx, arr){
+					ele.emit(channel, msg);
+					if(indx == arr.length-1){
+						deferred.resolve(true);
+					}
+				});	
+			}else{
+				deferred.reject('failed');
+			}
+
+			return deferred.promise;
+		}
+	};
 }

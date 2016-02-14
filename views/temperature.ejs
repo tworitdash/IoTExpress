@@ -19,6 +19,12 @@
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script type="text/javascript">
 	var socket = io('http://localhost:3001/');
+
+	socket.emit('auth',{
+			id: "vAl1d9",
+			uid: "test",
+			pass: "test"
+		});
 	
 	socket.on('message', function(msg){
 		$('#messages').html($('<li>').text(JSON.stringify(msg)));
