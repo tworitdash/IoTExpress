@@ -15,7 +15,7 @@ var connection = require('./routes/DbConnection.js')(mongoose);
 
 var routes = require('./routes/index');
 var users = require('./routes/users')(mongoose);
-var temperature = require('./routes/temperature');
+var temperature = require('./routes/temperature')(iot);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
